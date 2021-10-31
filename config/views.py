@@ -24,7 +24,7 @@ def start_page(request):
           "properties": {
             "title": place.title,
             "placeId": place.slug,
-            "detailsUrl": "",
+            "detailsUrl": f"/places/{place.pk}",
           }
         }
         places_json["features"].append(props)
@@ -34,10 +34,10 @@ def start_page(request):
     return render(request, 'frontend/index.html', context)
 
 def get_place_info(request, **kwargs):
-    try:
-        pk = kwargs['pk']
-    except KeyError():
-        return HttpResponse('Локация с таким id не найдена. Проверьте запрос.')
+    """
+    Возвращает JSON с информацией о локации с данным pk.
+    """
+    pk = kwargs['pk']
     
     place = get_object_or_404(Place, pk=pk)
 
