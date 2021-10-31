@@ -3,7 +3,7 @@ from django.db import models
 
 class Place(models.Model):
     """
-    Модель для экскурсии 
+    Модель для экскурсии (локации) 
     """
     title = models.CharField(max_length=256, 
                              verbose_name='Название',
@@ -30,7 +30,7 @@ class Place(models.Model):
 
 class Image(models.Model):
     """
-    Модель картинок для экскурсии 
+    Модель картинок для локации
     """
     image = models.ImageField(upload_to='images', 
                               verbose_name='Изображение'
@@ -41,7 +41,7 @@ class Image(models.Model):
                               verbose_name='Локация'                              
                               )
     position = models.SmallIntegerField(verbose_name='Позиция',
-                                        default=1
+                                        default=0,
                                         )                              
 
 
