@@ -1,5 +1,6 @@
 from django.contrib import admin
-from places.models import Place, Image
+from .models import Place, Image
+from .forms import PlaceForm
 from django.utils.html import format_html
 from adminsortable2.admin import SortableInlineAdminMixin
 
@@ -26,3 +27,5 @@ class PlaceAdmin(admin.ModelAdmin):
     inlines = [
         ImageInline,
     ]
+    def get_form(self, request, obj=None, **kwargs):
+        return PlaceForm
