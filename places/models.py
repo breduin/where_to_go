@@ -5,26 +5,50 @@ class Place(models.Model):
     """
     Модель для экскурсии 
     """
-    title = models.CharField(max_length=256)
-    slug = models.SlugField()
-    description_short = models.CharField(max_length=512)
-    description_long = models.TextField()
-    lng = models.CharField(max_length=17)
-    lat = models.CharField(max_length=17)
+    title = models.CharField(max_length=256, 
+                             verbose_name='Название',
+                             )
+    slug = models.SlugField(verbose_name='Обозначение')
+    description_short = models.CharField(max_length=512, 
+                                         verbose_name='Краткое описание',
+                                         )
+    description_long = models.TextField(verbose_name='Детальное писание')
+    lng = models.CharField(max_length=17, 
+                           verbose_name='Долгота',
+                           )
+    lat = models.CharField(max_length=17, 
+                           verbose_name='Широта',
+                           )
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name = 'Локация'
+        verbose_name_plural = 'Локации'
 
 
 class Image(models.Model):
     """
     Модель картинок для экскурсии 
     """
-    image = models.ImageField(upload_to='images')
+    image = models.ImageField(upload_to='images', 
+                              verbose_name='Изображение'
+                              )
     place = models.ForeignKey(Place, 
                               on_delete=models.CASCADE,
-                              related_name='images'                              
+                              related_name='images',
+                              verbose_name='Локация'                              
                               )
+    position = models.SmallIntegerField(verbose_name='Позиция',
+                                        default=1
+                                        )                              
+
 
     def __str__(self):
-        return f"{self.pk} {self.place.title}"
+        return f"{self.position} {self.place.title}"
+    
+    class Meta:
+        verbose_name = 'Изображение'
+        verbose_name_plural = 'Изображения'
+        ordering = ['position']
