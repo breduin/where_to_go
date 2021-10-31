@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from places.models import Place
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 
 def start_page(request):
@@ -14,11 +14,6 @@ def start_page(request):
         "features": []
     }
     for place in places:
-
-        # Собираем картинки для текущей локации в список
-        images_list = []
-        for image in place.images.all():
-            images_list.append(image.image.url)
          
         props = {
           "type": "Feature",
@@ -38,8 +33,36 @@ def start_page(request):
     context['places'] = places_json
     return render(request, 'frontend/index.html', context)
 
-def get_place(request, **kwargs):
-    pk = kwargs['pk']
+def get_place_info(request, **kwargs):
+    try:
+        pk = kwargs['pk']
+    except KeyError():
+        return HttpResponse('Локация с таким id не найдена. Проверьте запрос.')
+    
     place = get_object_or_404(Place, pk=pk)
-    response = HttpResponse(f'{place.title}') if place else HttpResponse('')
+
+    # Собираем картинки для текущей локации в список
+    images_list = []
+    for image in place.images.all():
+        images_list.append(image.image.url)
+
+    # Формируем словарь данных о локации.
+    place_info = {
+        "title": place.title,
+        "imgs": images_list,
+        "description_short": place.description_short,
+        "description_long": place.description_long,
+        "coordinates": {
+            "lng": place.lng, 
+            "lat": place.lat
+            }
+     }
+
+    # Формируем JSON ответ.
+    response = JsonResponse(place_info, safe=False,
+                            json_dumps_params={'indent': 2, 
+                                               'ensure_ascii': False,
+                                              }
+                            )
+
     return response
