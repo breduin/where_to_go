@@ -1,2 +1,0 @@
-exec  ./manage.py load_place < places_urls.txt
-
