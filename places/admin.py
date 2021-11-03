@@ -4,11 +4,21 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from adminsortable2.admin import SortableInlineAdminMixin
+from django.contrib.auth.models import User
 from .models import Place, Image
 from .forms import PlaceForm
 
 
-admin.site.register(Image)
+@admin.register(Image)
+class ImageAdmin(admin.ModelAdmin):
+    """
+    Класс для изображений в административной панели.
+    """
+    search_fields = ('place', ) 
+
+    def has_module_permission(self, request):
+        return request.user.is_superuser
+
 
 
 class ImageInline(SortableInlineAdminMixin, admin.TabularInline):
