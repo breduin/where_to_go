@@ -4,4 +4,4 @@ django-tinymce==3.3.0
 environs==9.3.4
 Pillow==8.4.0
 requests==2.26.0
-
+loguru==0.5.3

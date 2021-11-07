@@ -3,6 +3,7 @@
 """
 
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 from django.http import JsonResponse
 from places.models import Place
 
@@ -13,7 +14,7 @@ def start_page(request):
     """
     places = Place.objects.all()
 
-    places_json = {
+    places_on_map = {
       "type": "FeatureCollection",
         "features": []
     }
@@ -28,16 +29,18 @@ def start_page(request):
           "properties": {
             "title": place.title,
             "placeId": place.slug,
-            "detailsUrl": f"/places/{place.pk}",
+            "detailsUrl": reverse('place_details', args=[place.pk]),
           }
         }
-        places_json["features"].append(props)
+        places_on_map["features"].append(props)
 
-    context ={}
-    context['places'] = places_json
+  
+    context = {
+      'places': places_on_map,
+      }
     return render(request, 'frontend/index.html', context)
 
-def get_place_info(request, **kwargs):
+def get_place_details(request, **kwargs):
     """
     Возвращает JSON с информацией о локации с данным pk.
     """
@@ -45,13 +48,11 @@ def get_place_info(request, **kwargs):
 
     place = get_object_or_404(Place, pk=pk)
 
-    # Собираем картинки для текущей локации в список
     images_list = []
     for image in place.images.all():
         images_list.append(image.image.url)
 
-    # Формируем словарь данных о локации.
-    place_info = {
+    place_details = {
         "title": place.title,
         "imgs": images_list,
         "description_short": place.description_short,
@@ -62,8 +63,7 @@ def get_place_info(request, **kwargs):
             }
      }
 
-    # Формируем JSON ответ.
-    response = JsonResponse(place_info, safe=False,
+    response = JsonResponse(place_details, safe=False,
                             json_dumps_params={'indent': 2,
                                                'ensure_ascii': False,
                                               }
