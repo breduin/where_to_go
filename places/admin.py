@@ -6,7 +6,6 @@ from django.utils.html import format_html
 from adminsortable2.admin import SortableInlineAdminMixin
 from django.contrib.auth.models import User
 from .models import Place, Image
-from .forms import PlaceForm
 
 
 @admin.register(Image)
@@ -52,7 +51,7 @@ class PlaceAdmin(admin.ModelAdmin):
     Класс для отображения локации в административной панели.
     """
     search_fields = ('title', )
+    prepopulated_fields = {"slug": ("title",)}
     inlines = [
         ImageInline,
     ]
-    form = PlaceForm

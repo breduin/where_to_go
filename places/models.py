@@ -1,14 +1,22 @@
 """
 Модели (структура БД) приложения places
 """
-from django.core.validators import RegexValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from tinymce.models import HTMLField
 
 
 # Валидатор для координат
-coordinates_validator = RegexValidator(regex=r'^-?[1]?\d{1,2}\.\d{0,14}$',
-                             message="Географические координаты должны быть в формате: "
-                                     "'55.1234567' или '-134.1234567'.")
+lng_validator_message = 'Долгота должна быть в диапазоне от -180 до 180'
+lng_validators = [
+    MinValueValidator(-180, lng_validator_message),
+    MaxValueValidator(180, lng_validator_message)
+                 ]
+lat_validator_message = 'Широта должна быть в диапазоне от -90 до 90'
+lat_validators = [
+    MinValueValidator(-90, lat_validator_message),
+    MaxValueValidator(90, lat_validator_message)
+                 ] 
 
 class Place(models.Model):
     """
@@ -19,27 +27,27 @@ class Place(models.Model):
                              unique=True
                              )
     slug = models.SlugField(verbose_name='Обозначение',
-                            unique=True, 
+                            default='', 
                             help_text='Напишите уникальное условное обозначение локации, например "moscow-legends2021"'
                             )
-    description_short = models.CharField(max_length=512,
-                                         verbose_name='Краткое описание',
-                                         null=True,
-                                         blank=True
-                                         )
-    description_long = models.TextField(verbose_name='Детальное описание',
-                                        null=True,
-                                        blank=True
+    description_short = models.TextField(verbose_name='Краткое описание',
+                                         blank=True,
+                                         default=''
                                         )
-    lng = models.CharField(max_length=17,
-                           verbose_name='Долгота',
-                           validators=[coordinates_validator],
-                           )
-    lat = models.CharField(max_length=17,
-                           verbose_name='Широта',
-                           validators=[coordinates_validator],
-                           )
-
+    description_long = HTMLField(verbose_name='Детальное описание',
+                                 blank=True,
+                                 default=''
+                                 )
+    lng = models.DecimalField(max_digits=17, 
+                              decimal_places=14,
+                              verbose_name='Долгота',
+                              validators=lng_validators,
+                             )
+    lat = models.DecimalField(max_digits=17, 
+                              decimal_places=14,
+                              verbose_name='Широта',
+                              validators=lat_validators,
+                             )
     def __str__(self):
         return self.title
 

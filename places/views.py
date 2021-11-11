@@ -48,13 +48,11 @@ def get_place_details(request, **kwargs):
 
     place = get_object_or_404(Place, pk=pk)
 
-    images_list = []
-    for image in place.images.all():
-        images_list.append(image.image.url)
+    images_urls = [image.image.url for image in place.images.all()]
 
     place_details = {
         "title": place.title,
-        "imgs": images_list,
+        "imgs": images_urls,
         "description_short": place.description_short,
         "description_long": place.description_long,
         "coordinates": {
