@@ -48,7 +48,7 @@ class Command(BaseCommand):
             
             if 'error' in place_details:
                 logger.error(f'Ответ сервера в теле JSON содержит "error". Файл получен из {json_url}')
-                raise requests.exceptions.HTTPError(decoded_response['error'])
+                raise requests.exceptions.HTTPError(place_details['error'])
 
             # Валидация координат
             longitude = Decimal(place_details["coordinates"]["lng"])
@@ -75,7 +75,6 @@ class Command(BaseCommand):
                 to_load_yes_or_no = ''
                 pcreated = False
 
-            # Если такая запись есть, спрашиваем, загружать ли картинки по списку
             if not pcreated:
                 self.stdout.write('Такая запись уже есть.')
                 to_load_yes_or_no = input('Загрузить картинки из данного JSON-файла? (y/n)')
