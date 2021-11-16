@@ -50,7 +50,6 @@ class Command(BaseCommand):
                 logger.error(f'Ответ сервера в теле JSON содержит "error". Файл получен из {json_url}')
                 raise requests.exceptions.HTTPError(place_details['error'])
 
-            # Валидация координат
             longitude = Decimal(place_details["coordinates"]["lng"])
             latitude = Decimal(place_details["coordinates"]["lat"])
             for lng_validator, lat_validator in zip(lng_validators, lat_validators):
@@ -58,12 +57,12 @@ class Command(BaseCommand):
                 lat_validator(latitude)
 
             self.stdout.write(f"Загружается локация {place_details['title']}")
-            # Создаём локацию
+
             try:
                 place, pcreated = Place.objects.get_or_create(
-                                title=place_details['title'],
+                                slug=slugify(place_details['title'], allow_unicode=True),
                                 defaults={
-                                'slug': slugify(place_details['title'], allow_unicode=True),
+                                'title': place_details['title'],
                                 'description_short': place_details["description_short"],
                                 'description_long': place_details["description_long"],
                                 'lng': longitude,
@@ -72,19 +71,17 @@ class Command(BaseCommand):
                                 )
                 place_status = 'записана'
             except IntegrityError:
-                to_load_yes_or_no = ''
                 pcreated = False
 
             if not pcreated:
                 self.stdout.write('Такая запись уже есть.')
                 to_load_yes_or_no = input('Загрузить картинки из данного JSON-файла? (y/n)')
                 if to_load_yes_or_no.lower() not in ['y', 'yes', 'yeap', 'д', 'да', 'ага']:
-                    exit()
+                    continue
                 else:
                     place = Place.objects.get(title=place_details['title'])
                     place_status = 'обновлена'
 
-            # Загружаем картинки по списку url-ов
             images_urls = place_details["imgs"]
             for image_url in images_urls:
                 im = requests.get(image_url)

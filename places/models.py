@@ -24,10 +24,10 @@ class Place(models.Model):
     """
     title = models.CharField(max_length=256,
                              verbose_name='Название',
-                             unique=True
+                             default='',
                              )
     slug = models.SlugField(verbose_name='Обозначение',
-                            default='', 
+                            unique=True, 
                             help_text='Напишите уникальное условное обозначение локации, например "moscow-legends2021"'
                             )
     description_short = models.TextField(verbose_name='Краткое описание',
