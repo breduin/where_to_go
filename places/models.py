@@ -52,9 +52,6 @@ class Place(models.Model):
         return self.title
 
     class Meta:
-        """
-        Мета-опции класса Place
-        """
         verbose_name = 'Локация'
         verbose_name_plural = 'Локации'
 
@@ -82,9 +79,6 @@ class Image(models.Model):
         return f"{self.position} {self.place.title}"
 
     class Meta:
-        """
-        Мета-опции класса Image
-        """
         verbose_name = 'Изображение'
         verbose_name_plural = 'Изображения'
         ordering = ['position']
