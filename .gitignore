@@ -1,5 +1,6 @@
 # Project
 .vscode/
+.gitignore
 __pycache__/
 /static/
 media/
@@ -66,8 +67,6 @@ db.sqlite3
 db.sqlite3-journal
 db.sqlite3.bak*
 .idea/
-manage.py
-migrations/
 
 # Flask stuff:
 instance/
