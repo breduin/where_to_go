@@ -31,7 +31,7 @@ SECRET_KEY = env.str("SECRET_KEY", "django-insecure-@q!i%0#*d$2_s11z=fi^wd(hci2t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", True)
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", ['127.0.0.1'])
 
 # Application definition
 
